@@ -1,6 +1,5 @@
 # docker-ex
 
-[![CI](https://github.com/spur27/docker-ex/actions/workflows/ci.yml/badge.svg)](https://github.com/spur27/docker-ex/actions/workflows/ci.yml)
 [![Docker](https://img.shields.io/badge/docker-ghcr.io%2Fspur27%2Fdocker--ex-blue?logo=docker&logoColor=white)](https://github.com/spur27/docker-ex/pkgs/container/docker-ex)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.md)
 
