@@ -1,0 +1,300 @@
+# Cargo configuration for the Docker-EX cross-compilation Docker image.
+# Paths reflect /opt/... container layout — not the host .cargo/config.toml.
+[env]
+PKG_CONFIG_ALLOW_CROSS = "1"
+
+# Force lzma to build from vendored sources — prevents lzma-sys from using the
+# host pkg-config and emitting -L/usr/lib/x86_64-linux-gnu, which would pull
+# glibc's libc.a into musl/cross link invocations.
+LZMA_API_STATIC = "1"
+
+# aws-lc-sys: i686 Windows MSVC — clang-cl's -arch:SSE2 does not define __SSE2__
+# in MSVC compatibility mode on Linux; disable assembly to use the pure-C fallback.
+# NO_ASM forces CMake mode.  The Dockerfile pre-populates the xwin cache with both
+# msvcrt.lib (MSVC CRT) and kernel32.lib (Windows SDK) so cmake's compiler-identification
+# link test finds both and passes.
+AWS_LC_SYS_NO_ASM_i686_pc_windows_msvc = "1"
+
+PKG_CONFIG_aarch64_unknown_linux_gnu        = "/opt/cross/bin/aarch64-unknown-linux-gnu-pkg-config"
+PKG_CONFIG_armv7_unknown_linux_gnueabihf    = "/opt/cross/bin/armv7-unknown-linux-gnueabihf-pkg-config"
+# arm and thumbv7neon share the armv7 sysroot
+PKG_CONFIG_arm_unknown_linux_gnueabihf        = "/opt/cross/bin/armv7-unknown-linux-gnueabihf-pkg-config"
+PKG_CONFIG_thumbv7neon_unknown_linux_gnueabihf = "/opt/cross/bin/armv7-unknown-linux-gnueabihf-pkg-config"
+PKG_CONFIG_i686_unknown_linux_gnu           = "/opt/cross/bin/i686-unknown-linux-gnu-pkg-config"
+PKG_CONFIG_riscv64gc_unknown_linux_gnu      = "/opt/cross/bin/riscv64gc-unknown-linux-gnu-pkg-config"
+PKG_CONFIG_s390x_unknown_linux_gnu          = "/opt/cross/bin/s390x-unknown-linux-gnu-pkg-config"
+PKG_CONFIG_powerpc64le_unknown_linux_gnu    = "/opt/cross/bin/powerpc64le-unknown-linux-gnu-pkg-config"
+PKG_CONFIG_powerpc64_unknown_linux_gnu      = "/opt/cross/bin/powerpc64-unknown-linux-gnu-pkg-config"
+PKG_CONFIG_powerpc_unknown_linux_gnu        = "/opt/cross/bin/powerpc-unknown-linux-gnu-pkg-config"
+PKG_CONFIG_sparc64_unknown_linux_gnu        = "/opt/cross/bin/sparc64-unknown-linux-gnu-pkg-config"
+PKG_CONFIG_mips_unknown_linux_gnu           = "/opt/cross/bin/mips-unknown-linux-gnu-pkg-config"
+PKG_CONFIG_mipsel_unknown_linux_gnu         = "/opt/cross/bin/mipsel-unknown-linux-gnu-pkg-config"
+PKG_CONFIG_mips64_unknown_linux_gnuabi64    = "/opt/cross/bin/mips64-unknown-linux-gnuabi64-pkg-config"
+PKG_CONFIG_mips64el_unknown_linux_gnuabi64  = "/opt/cross/bin/mips64el-unknown-linux-gnuabi64-pkg-config"
+PKG_CONFIG_loongarch64_unknown_linux_gnu    = "/opt/cross/bin/loongarch64-unknown-linux-gnu-pkg-config"
+
+# BSD pkg-config wrappers
+PKG_CONFIG_x86_64_unknown_freebsd   = "/opt/cross/bin/x86_64-unknown-freebsd-pkg-config"
+PKG_CONFIG_aarch64_unknown_freebsd  = "/opt/cross/bin/aarch64-unknown-freebsd-pkg-config"
+PKG_CONFIG_x86_64_unknown_netbsd    = "/opt/cross/bin/x86_64-unknown-netbsd-pkg-config"
+PKG_CONFIG_aarch64_unknown_netbsd   = "/opt/cross/bin/aarch64-unknown-netbsd-pkg-config"
+PKG_CONFIG_x86_64_unknown_openbsd      = "/opt/cross/bin/x86_64-unknown-openbsd-pkg-config"
+PKG_CONFIG_aarch64_unknown_openbsd     = "/opt/cross/bin/aarch64-unknown-openbsd-pkg-config"
+PKG_CONFIG_i686_unknown_netbsd         = "/opt/cross/bin/i686-unknown-netbsd-pkg-config"
+PKG_CONFIG_powerpc_unknown_netbsd      = "/opt/cross/bin/powerpc-unknown-netbsd-pkg-config"
+PKG_CONFIG_i686_unknown_openbsd        = "/opt/cross/bin/i686-unknown-openbsd-pkg-config"
+PKG_CONFIG_riscv64gc_unknown_openbsd   = "/opt/cross/bin/riscv64gc-unknown-openbsd-pkg-config"
+
+# Android — CC/CXX/AR for NDK clang (cc-rs doesn't know about API-versioned names)
+CC_aarch64_linux_android  = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
+CXX_aarch64_linux_android = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang++"
+AR_aarch64_linux_android  = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
+
+CC_armv7_linux_androideabi  = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang"
+CXX_armv7_linux_androideabi = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang++"
+AR_armv7_linux_androideabi  = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
+
+CC_i686_linux_android  = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang"
+CXX_i686_linux_android = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang++"
+AR_i686_linux_android  = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
+
+CC_x86_64_linux_android  = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang"
+CXX_x86_64_linux_android = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang++"
+AR_x86_64_linux_android  = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
+
+# Linux GNU cross-compilers — required by cc-rs for C++ build scripts (e.g. imgui-sys)
+CC_aarch64_unknown_linux_gnu     = "aarch64-linux-gnu-gcc"
+CXX_aarch64_unknown_linux_gnu    = "aarch64-linux-gnu-g++"
+AR_aarch64_unknown_linux_gnu     = "aarch64-linux-gnu-ar"
+
+CC_armv7_unknown_linux_gnueabihf    = "arm-linux-gnueabihf-gcc"
+CXX_armv7_unknown_linux_gnueabihf   = "arm-linux-gnueabihf-g++"
+AR_armv7_unknown_linux_gnueabihf    = "arm-linux-gnueabihf-ar"
+
+CC_arm_unknown_linux_gnueabihf      = "arm-linux-gnueabihf-gcc"
+CXX_arm_unknown_linux_gnueabihf     = "arm-linux-gnueabihf-g++"
+AR_arm_unknown_linux_gnueabihf      = "arm-linux-gnueabihf-ar"
+
+CC_thumbv7neon_unknown_linux_gnueabihf  = "arm-linux-gnueabihf-gcc"
+CXX_thumbv7neon_unknown_linux_gnueabihf = "arm-linux-gnueabihf-g++"
+AR_thumbv7neon_unknown_linux_gnueabihf  = "arm-linux-gnueabihf-ar"
+
+CC_i686_unknown_linux_gnu    = "i686-linux-gnu-gcc"
+CXX_i686_unknown_linux_gnu   = "i686-linux-gnu-g++"
+AR_i686_unknown_linux_gnu    = "i686-linux-gnu-ar"
+
+CC_powerpc64_unknown_linux_gnu   = "powerpc64-linux-gnu-gcc"
+CXX_powerpc64_unknown_linux_gnu  = "powerpc64-linux-gnu-g++"
+AR_powerpc64_unknown_linux_gnu   = "powerpc64-linux-gnu-ar"
+
+CC_powerpc64le_unknown_linux_gnu   = "powerpc64le-linux-gnu-gcc"
+CXX_powerpc64le_unknown_linux_gnu  = "powerpc64le-linux-gnu-g++"
+AR_powerpc64le_unknown_linux_gnu   = "powerpc64le-linux-gnu-ar"
+
+CC_powerpc_unknown_linux_gnu     = "powerpc-linux-gnu-gcc"
+CXX_powerpc_unknown_linux_gnu    = "powerpc-linux-gnu-g++"
+AR_powerpc_unknown_linux_gnu     = "powerpc-linux-gnu-ar"
+
+CC_riscv64gc_unknown_linux_gnu   = "riscv64-linux-gnu-gcc"
+CXX_riscv64gc_unknown_linux_gnu  = "riscv64-linux-gnu-g++"
+AR_riscv64gc_unknown_linux_gnu   = "riscv64-linux-gnu-ar"
+
+CC_s390x_unknown_linux_gnu   = "s390x-linux-gnu-gcc"
+CXX_s390x_unknown_linux_gnu  = "s390x-linux-gnu-g++"
+AR_s390x_unknown_linux_gnu   = "s390x-linux-gnu-ar"
+
+CC_sparc64_unknown_linux_gnu   = "sparc64-linux-gnu-gcc"
+CXX_sparc64_unknown_linux_gnu  = "sparc64-linux-gnu-g++"
+AR_sparc64_unknown_linux_gnu   = "sparc64-linux-gnu-ar"
+
+# LoongArch64
+CC_loongarch64_unknown_linux_gnu  = "loongarch64-linux-gnu-gcc"
+CXX_loongarch64_unknown_linux_gnu = "loongarch64-linux-gnu-g++"
+AR_loongarch64_unknown_linux_gnu  = "loongarch64-linux-gnu-ar"
+
+CC_x86_64_unknown_freebsd  = "/opt/cross/bin/x86_64-unknown-freebsd-cc"
+CXX_x86_64_unknown_freebsd = "/opt/cross/bin/x86_64-unknown-freebsd-cc"
+AR_x86_64_unknown_freebsd  = "llvm-ar"
+
+CC_aarch64_unknown_freebsd  = "/opt/cross/bin/aarch64-unknown-freebsd-cc"
+CXX_aarch64_unknown_freebsd = "/opt/cross/bin/aarch64-unknown-freebsd-cc"
+AR_aarch64_unknown_freebsd  = "llvm-ar"
+
+CC_x86_64_unknown_netbsd  = "/opt/cross/bin/x86_64-unknown-netbsd-cc"
+CXX_x86_64_unknown_netbsd = "/opt/cross/bin/x86_64-unknown-netbsd-cxx"
+AR_x86_64_unknown_netbsd  = "llvm-ar"
+
+CC_aarch64_unknown_netbsd  = "/opt/cross/bin/aarch64-unknown-netbsd-cc"
+CXX_aarch64_unknown_netbsd = "/opt/cross/bin/aarch64-unknown-netbsd-cxx"
+AR_aarch64_unknown_netbsd  = "llvm-ar"
+
+CC_x86_64_unknown_openbsd  = "/opt/cross/bin/x86_64-unknown-openbsd-cc"
+CXX_x86_64_unknown_openbsd = "/opt/cross/bin/x86_64-unknown-openbsd-cc"
+AR_x86_64_unknown_openbsd  = "llvm-ar"
+
+CC_aarch64_unknown_openbsd  = "/opt/cross/bin/aarch64-unknown-openbsd-cc"
+CXX_aarch64_unknown_openbsd = "/opt/cross/bin/aarch64-unknown-openbsd-cc"
+AR_aarch64_unknown_openbsd  = "llvm-ar"
+
+CC_i686_unknown_netbsd  = "/opt/cross/bin/i686-unknown-netbsd-cc"
+CXX_i686_unknown_netbsd = "/opt/cross/bin/i686-unknown-netbsd-cxx"
+AR_i686_unknown_netbsd  = "llvm-ar"
+
+CC_powerpc_unknown_netbsd  = "/opt/cross/bin/powerpc-unknown-netbsd-cc"
+CXX_powerpc_unknown_netbsd = "/opt/cross/bin/powerpc-unknown-netbsd-cxx"
+AR_powerpc_unknown_netbsd  = "llvm-ar"
+
+CC_i686_unknown_openbsd  = "/opt/cross/bin/i686-unknown-openbsd-cc"
+CXX_i686_unknown_openbsd = "/opt/cross/bin/i686-unknown-openbsd-cc"
+AR_i686_unknown_openbsd  = "llvm-ar"
+
+CC_riscv64gc_unknown_openbsd  = "/opt/cross/bin/riscv64gc-unknown-openbsd-cc"
+CXX_riscv64gc_unknown_openbsd = "/opt/cross/bin/riscv64gc-unknown-openbsd-cc"
+AR_riscv64gc_unknown_openbsd  = "llvm-ar"
+
+# ── WASM ───────────────────────────────────────────────────────────────────────
+# WASI SDK compilers — allow cc-rs to compile C/C++ code for WASI targets
+# (e.g. zstd-sys). The SDK clang wrappers include --sysroot automatically.
+CC_wasm32_wasip1  = "/opt/wasi-sdk/bin/wasm32-wasip1-clang"
+CXX_wasm32_wasip1 = "/opt/wasi-sdk/bin/wasm32-wasip1-clang++"
+AR_wasm32_wasip1  = "/opt/wasi-sdk/bin/llvm-ar"
+
+CC_wasm32_wasip2  = "/opt/wasi-sdk/bin/wasm32-wasip2-clang"
+CXX_wasm32_wasip2 = "/opt/wasi-sdk/bin/wasm32-wasip2-clang++"
+AR_wasm32_wasip2  = "/opt/wasi-sdk/bin/llvm-ar"
+
+[target.aarch64-unknown-linux-gnu]
+ar     = "aarch64-linux-gnu-ar"
+linker = "aarch64-linux-gnu-gcc"
+
+[target.arm-unknown-linux-gnueabihf]
+ar     = "arm-linux-gnueabihf-ar"
+linker = "arm-linux-gnueabihf-gcc"
+
+[target.armv7-unknown-linux-gnueabihf]
+ar     = "arm-linux-gnueabihf-ar"
+linker = "arm-linux-gnueabihf-gcc"
+
+[target.thumbv7neon-unknown-linux-gnueabihf]
+ar     = "arm-linux-gnueabihf-ar"
+linker = "arm-linux-gnueabihf-gcc"
+
+[target.i686-unknown-linux-gnu]
+ar     = "i686-linux-gnu-ar"
+linker = "i686-linux-gnu-gcc"
+
+[target.powerpc64-unknown-linux-gnu]
+ar     = "powerpc64-linux-gnu-ar"
+linker = "powerpc64-linux-gnu-gcc"
+
+[target.powerpc64le-unknown-linux-gnu]
+ar     = "powerpc64le-linux-gnu-ar"
+linker = "powerpc64le-linux-gnu-gcc"
+
+[target.powerpc-unknown-linux-gnu]
+ar     = "powerpc-linux-gnu-ar"
+linker = "powerpc-linux-gnu-gcc"
+
+[target.riscv64gc-unknown-linux-gnu]
+ar     = "riscv64-linux-gnu-ar"
+linker = "riscv64-linux-gnu-gcc"
+
+[target.s390x-unknown-linux-gnu]
+ar     = "s390x-linux-gnu-ar"
+linker = "s390x-linux-gnu-gcc"
+
+[target.sparc64-unknown-linux-gnu]
+ar     = "sparc64-linux-gnu-ar"
+linker = "sparc64-linux-gnu-gcc"
+
+[target.loongarch64-unknown-linux-gnu]
+ar     = "loongarch64-linux-gnu-ar"
+linker = "loongarch64-linux-gnu-gcc"
+
+[target.x86_64-unknown-linux-musl]
+ar     = "ar"
+linker = "musl-gcc"
+
+[target.aarch64-unknown-linux-musl]
+ar     = "aarch64-linux-musl-ar"
+linker = "aarch64-linux-musl-gcc"
+
+# MIPS — Tier 3, nightly only
+[target.mips-unknown-linux-gnu]
+ar     = "mips-linux-gnu-ar"
+linker = "mips-linux-gnu-gcc"
+
+[target.mipsel-unknown-linux-gnu]
+ar     = "mipsel-linux-gnu-ar"
+linker = "mipsel-linux-gnu-gcc"
+
+[target.mips64-unknown-linux-gnuabi64]
+ar     = "mips64-linux-gnuabi64-ar"
+linker = "mips64-linux-gnuabi64-gcc"
+
+[target.mips64el-unknown-linux-gnuabi64]
+ar     = "mips64el-linux-gnuabi64-ar"
+linker = "mips64el-linux-gnuabi64-gcc"
+
+# Android NDK r27d
+[target.aarch64-linux-android]
+ar     = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
+linker = "/usr/local/bin/aarch64-android21-clang-ld"
+
+[target.armv7-linux-androideabi]
+ar     = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
+linker = "/usr/local/bin/armv7a-android21-clang-ld"
+
+[target.i686-linux-android]
+ar     = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
+linker = "/usr/local/bin/i686-android21-clang-ld"
+
+[target.x86_64-linux-android]
+ar     = "/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
+linker = "/usr/local/bin/x86_64-android21-clang-ld"
+
+[target.x86_64-unknown-freebsd]
+ar     = "llvm-ar"
+linker = "/opt/cross/bin/x86_64-unknown-freebsd-link"
+
+[target.aarch64-unknown-freebsd]
+ar     = "llvm-ar"
+linker = "/opt/cross/bin/aarch64-unknown-freebsd-link"
+
+[target.x86_64-unknown-netbsd]
+ar     = "llvm-ar"
+linker = "/opt/cross/bin/x86_64-unknown-netbsd-link"
+
+[target.aarch64-unknown-netbsd]
+ar     = "llvm-ar"
+linker = "/opt/cross/bin/aarch64-unknown-netbsd-link"
+
+[target.x86_64-unknown-openbsd]
+ar     = "llvm-ar"
+linker = "/opt/cross/bin/x86_64-unknown-openbsd-link"
+
+[target.aarch64-unknown-openbsd]
+ar     = "llvm-ar"
+linker = "/opt/cross/bin/aarch64-unknown-openbsd-link"
+
+[target.i686-unknown-netbsd]
+ar     = "llvm-ar"
+linker = "/opt/cross/bin/i686-unknown-netbsd-link"
+
+[target.powerpc-unknown-netbsd]
+ar     = "llvm-ar"
+linker = "/opt/cross/bin/powerpc-unknown-netbsd-link"
+
+[target.i686-unknown-openbsd]
+ar     = "llvm-ar"
+linker = "/opt/cross/bin/i686-unknown-openbsd-link"
+
+[target.riscv64gc-unknown-openbsd]
+ar     = "llvm-ar"
+linker = "/opt/cross/bin/riscv64gc-unknown-openbsd-link"
+
+[target.wasm32-wasip1]
+runner = ["wasmtime", "run", "--"]
+
+[target.wasm32-wasip2]
+runner = ["wasmtime", "run", "--"]
